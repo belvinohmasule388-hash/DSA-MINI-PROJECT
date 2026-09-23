@@ -1,0 +1,84 @@
+public class StudentLinkedList {
+
+    public static class Student {
+        String studentNo, name, serviceType;
+        int estimatedTime;
+
+        public Student(String id, String name, String service, int time) {
+            this.studentNo = id; this.name = name; 
+            this.serviceType = service; this.estimatedTime = time;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("[%s] %-8s | %-12s | %d min", studentNo, name, serviceType, estimatedTime);
+        }
+    }
+
+    private static class Node {
+        Student data;
+        Node next;
+        Node(Student s) { this.data = s; }
+    }
+
+    private Node head = null;
+    private int size = 0;
+
+    public void insertAtBeginning(Student s) { insertAtPosition(s, 1); }
+    public void insertAtEnd(Student s) { insertAtPosition(s, size + 1); }
+
+    public void insertAtPosition(Student s, int pos) {
+        if (pos < 1 || pos > size + 1) return;
+        Node newNode = new Node(s);
+        if (pos == 1) {
+            newNode.next = head;
+            head = newNode;
+        } else {
+            Node temp = head;
+            for (int i = 1; i < pos - 1; i++) temp = temp.next;
+            newNode.next = temp.next;
+            temp.next = newNode;
+        }
+        size++;
+    }
+
+    public boolean deleteStudent(String id) {
+        if (head == null) return false;
+        if (head.data.studentNo.equals(id)) { head = head.next; size--; return true; }
+        Node temp = head;
+        while (temp.next != null && !temp.next.data.studentNo.equals(id)) temp = temp.next;
+        if (temp.next != null) { temp.next = temp.next.next; size--; return true; }
+        return false;
+    }
+
+    public Student searchStudent(String id) {
+        for (Node temp = head; temp != null; temp = temp.next)
+            if (temp.data.studentNo.equals(id)) return temp.data;
+        return null;
+    }
+
+    public void displayStudents() {
+        for (Node temp = head; temp != null; temp = temp.next) System.out.println(temp.data);
+        System.out.println();
+    }
+
+    public static void main(String[] args) {
+        StudentLinkedList list = new StudentLinkedList();
+
+        // Demonstrating Insertions (Beginning, End, Specified Position)
+        list.insertAtEnd(new Student("221045678", "Maria", "Registration", 12));
+        list.insertAtEnd(new Student("222034512", "Tomas", "Student Card", 5));
+        list.insertAtBeginning(new Student("223041876", "Ndapewa", "Fees", 8));
+        list.insertAtPosition(new Student("221067341", "Simon", "Documents", 4), 3);
+
+        System.out.println("--- Current Records ---");
+        list.displayStudents();
+
+        // Search & Delete
+        System.out.println("Search '221067341': " + list.searchStudent("221067341"));
+        list.deleteStudent("222034512"); // Delete Tomas
+
+        System.out.println("\n--- After Deleting '222034512' ---");
+        list.displayStudents();
+    }
+}
