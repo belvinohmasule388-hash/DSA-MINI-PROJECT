@@ -1,0 +1,55 @@
+public class QuickSort {
+
+    static long comparisons = 0; // counts data-value comparisons
+
+    public static void main(String[] args) {
+        int[] numbers = {17, 5, 23, 8, 14, 3, 11, 20, 6, 9};
+
+        System.out.println("Before sorting:");
+        printArray(numbers);
+
+        quickSort(numbers, 0, numbers.length - 1);
+
+        System.out.println("\nAfter sorting:");
+        printArray(numbers);
+
+        System.out.println("\nTotal comparisons: " + comparisons);
+    }
+
+    // Recursively sorts the array between low and high
+    public static void quickSort(int[] arr, int low, int high) {
+        if (low < high) {
+            int pivotIndex = partition(arr, low, high);
+            quickSort(arr, low, pivotIndex - 1);
+            quickSort(arr, pivotIndex + 1, high);
+        }
+    }
+    // Places the pivot (last element) in its correct sorted position
+    // and puts smaller values to its left, bigger values to its right
+    public static int partition(int[] arr, int low, int high) {
+        int pivot = arr[high];
+        int i = low - 1; // boundary for values smaller than pivot
+
+        for (int j = low; j < high; j++) {
+            comparisons++; // comparing arr[j] with pivot
+            if (arr[j] < pivot) {
+                i++;
+                swap(arr, i, j);
+            }
+        }
+        swap(arr, i + 1, high); // put pivot in its final position
+        return i + 1;
+    }
+
+    public static void swap(int[] arr, int a, int b) {
+        int temp = arr[a];
+        arr[a] = arr[b];
+        arr[b] = temp;
+    }
+    public static void printArray(int[] arr) {
+        for (int num : arr) {
+            System.out.print(num + " ");
+        }
+        System.out.println();
+    }
+}   
