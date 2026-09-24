@@ -1,4 +1,7 @@
- class Main {
+Before serving: front -> [Maria] -> [Tomas] -> [Ndapewa] -> [Simon] -> [Anna] -> [Petrus] <- rear 
+After serving 3 (Maria, Tomas, Ndapewa dequeued): front -> [Simon] -> [Anna] -> [Petrus] <- rear
+
+class Main {
     public static void main(String[] args) {
         StudentQueue queue = new StudentQueue();
  
