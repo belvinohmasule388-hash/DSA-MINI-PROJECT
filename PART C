@@ -192,3 +192,11 @@ public class Main {
         System.out.printf("%-15s %-10d %-15d %-15d%n", label, original.length, comparisons, (end - start));
     }
 }
+Answers Part C:
+1.	 Quick sort with size 50 performed the fewest comparisons. 
+2.	Selection sort with size 500 performed the most comparison.
+3.	Selection sort with size 100 performed the best on the almost sorted array.
+4.	Selection sorts scale the best as the input became large.
+5.	
+6.	No because it also depends on the size that was inputted at that specific algorithm at that specific moment of time.
+
