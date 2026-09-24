@@ -1,0 +1,5 @@
+Part A5 — Data-Structure Justification
+Array (Task A4): service times are only ever added at the end and read in one pass at closing time — no insertion or deletion mid-list — so a simple fixed-size array is the cheapest structure that does the job, with direct index access for the single traversal needed.
+Singly Linked List (Task A2): the number of student records is unknown in advance and records are added/removed throughout the day. A linked list grows and shrinks one node at a time with no wasted space, and — unlike an array — deleting or inserting a record doesn't require shifting every following element.
+Stack (Task A3): postfix evaluation always needs the two most-recently-seen operands to resolve an operator — a Last-In-First-Out structure is exactly what 'the last two things I saw' means. A queue (First-In-First-Out) would hand back the wrong operands.
+Queue (Task A1): students must be served strictly in arrival order (FIFO). A queue only ever touches its two ends (front to remove, rear to add), so enqueue and dequeue cost the same regardless of how many students are waiting, and nobody can be served out of turn.
