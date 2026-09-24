@@ -82,3 +82,11 @@ public class StudentLinkedList {
         list.displayStudents();
     }
 }
+
+Insertion at beginning:
+Before: head -> [Maria] -> [Tomas] -> null 
+After: head -> [Ndapewa] -> [Maria] -> [Tomas] -> null
+Deletion of Ndapewa:
+Before: head -> [Ndapewa] -> [Maria] -> [Simon] -> [Tomas] -> null 
+After: head -> [Maria] -> [Simon] -> [Tomas] -> null (Ndapewa's node is unlinked — previous.next now skips over it)
+
