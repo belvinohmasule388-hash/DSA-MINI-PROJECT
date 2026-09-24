@@ -1,0 +1,61 @@
+import java.util.Arrays;
+
+public class MergeSortDemo {
+
+    static long comparisons = 0;
+
+    public static void main(String[] args) {
+        int[] serviceTimes = {17, 5, 23, 8, 14, 3, 11, 20, 6, 9};
+
+        System.out.println("Before sorting: " + Arrays.toString(serviceTimes));
+
+        mergeSort(serviceTimes, 0, serviceTimes.length - 1);
+
+        System.out.println("After sorting: " + Arrays.toString(serviceTimes));
+        System.out.println("Total comparisons: " + comparisons);
+    }
+
+   
+    public static void mergeSort(int[] arr, int left, int right) {
+        if (left >= right) {
+            return; // base case: 0 or 1 element, already sorted on its own
+        }
+        int mid = left + (right - left) / 2;
+
+        mergeSort(arr, left, mid);       // sort left half
+        mergeSort(arr, mid + 1, right);  // sort right half
+        merge(arr, left, mid, right);    // merge the two sorted halves
+    }
+
+    
+    public static void merge(int[] arr, int left, int mid, int right) {
+        int[] leftArr = Arrays.copyOfRange(arr, left, mid + 1);
+        int[] rightArr = Arrays.copyOfRange(arr, mid + 1, right + 1);
+
+        int i = 0, j = 0, k = left;
+
+        while (i < leftArr.length && j < rightArr.length) {
+            comparisons++; // comparing leftArr[i] with rightArr[j]
+            if (leftArr[i] <= rightArr[j]) {
+                arr[k] = leftArr[i];
+                i++;
+            } else {
+                arr[k] = rightArr[j];
+                j++;
+            }
+            k++;
+        }
+
+       
+        while (i < leftArr.length) {
+            arr[k] = leftArr[i];
+            i++;
+            k++;
+        }
+        while (j < rightArr.length) {
+            arr[k] = rightArr[j];
+            j++;
+            k++;
+        }
+    }
+}
