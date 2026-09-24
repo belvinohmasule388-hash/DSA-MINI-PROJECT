@@ -1,0 +1,74 @@
+package datastructures;
+
+/**
+ * Custom Stack implementation using arrays.
+ * Task A3 - Postfix Expression Evaluation
+ * Supports: push(), pop(), peek(), isEmpty(), isFull()
+ */
+public class Stack {
+    private int[] stack;
+    private int top;
+    private int capacity;
+
+    public Stack(int size) {
+        this.capacity = size;
+        this.stack = new int[size];
+        this.top = -1; // empty stack
+    }
+
+    // Push an element onto the stack
+    public void push(int value) {
+        if (isFull()) {
+            System.out.println("Stack Overflow! Cannot push " + value);
+            return;
+        }
+        top++;
+        stack[top] = value;
+    }
+
+    // Pop the top element
+    public int pop() {
+        if (isEmpty()) {
+            System.out.println("Stack Underflow! Stack is empty.");
+            return Integer.MIN_VALUE;
+        }
+        int value = stack[top];
+        top--;
+        return value;
+    }
+
+    // Peek at the top element without removing
+    public int peek() {
+        if (isEmpty()) {
+            System.out.println("Stack is empty.");
+            return Integer.MIN_VALUE;
+        }
+        return stack[top];
+    }
+
+    public boolean isEmpty() {
+        return top == -1;
+    }
+
+    public boolean isFull() {
+        return top == capacity - 1;
+    }
+
+    public int size() {
+        return top + 1;
+    }
+
+    // Display stack contents (from top to bottom)
+    public void display() {
+        if (isEmpty()) {
+            System.out.println("Stack: [ empty ]");
+            return;
+        }
+        System.out.print("Stack (top→bottom): ");
+        for (int i = top; i >= 0; i--) {
+            System.out.print(stack[i]);
+            if (i > 0) System.out.print(", ");
+        }
+        System.out.println();
+    }
+}
