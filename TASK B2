@@ -1,0 +1,49 @@
+import java.util.Arrays;
+
+public class InsertionSortDemo {
+
+    static long comparisons = 0;
+    static long shifts = 0;
+
+    public static void main(String[] args) {
+        int[] serviceTimes = {17, 5, 23, 8, 14, 3, 11, 20, 6, 9};
+
+        System.out.println("Before sorting: " + Arrays.toString(serviceTimes));
+        System.out.println();
+
+        insertionSort(serviceTimes, 3); // show first 3 passes
+
+        System.out.println();
+        System.out.println("After sorting: " + Arrays.toString(serviceTimes));
+        System.out.println("Total comparisons: " + comparisons);
+        System.out.println("Total shifts: " + shifts);
+    }
+
+    // Sorts the array in place using insertion sort.
+    // passesToShow controls how many early passes get printed (for the report).
+    public static void insertionSort(int[] arr, int passesToShow) {
+        comparisons = 0;
+        shifts = 0;
+
+        for (int i = 1; i < arr.length; i++) {
+            int key = arr[i];
+            int j = i - 1;
+
+            while (j >= 0) {
+                comparisons++; // comparing arr[j] with key
+                if (arr[j] > key) {
+                    arr[j + 1] = arr[j];
+                    shifts++;
+                    j--;
+                } else {
+                    break;
+                }
+            }
+            arr[j + 1] = key;
+
+            if (i <= passesToShow) {
+                System.out.println("After pass " + i + ": " + Arrays.toString(arr));
+            }
+        }
+    }
+}
