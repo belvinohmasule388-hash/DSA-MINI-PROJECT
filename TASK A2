@@ -65,7 +65,6 @@ public class StudentLinkedList {
     public static void main(String[] args) {
         StudentLinkedList list = new StudentLinkedList();
 
-        // Demonstrating Insertions (Beginning, End, Specified Position)
         list.insertAtEnd(new Student("221045678", "Maria", "Registration", 12));
         list.insertAtEnd(new Student("222034512", "Tomas", "Student Card", 5));
         list.insertAtBeginning(new Student("223041876", "Ndapewa", "Fees", 8));
