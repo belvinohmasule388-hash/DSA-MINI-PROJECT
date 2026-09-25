@@ -1,0 +1,318 @@
+PART D — Integrated Service-Centre System
+
+import java.util.Scanner;
+import java.util.Random;
+
+public class CampusServiceCentre {
+
+    // -------------------------------------------------------------
+    // DATA MODELS
+    // -------------------------------------------------------------
+    static class Student {
+        String studentNo;
+        String name;
+        String serviceType;
+        int estimatedTime;
+
+        public Student(String studentNo, String name, String serviceType, int estimatedTime) {
+            this.studentNo = studentNo;
+            this.name = name;
+            this.serviceType = serviceType;
+            this.estimatedTime = estimatedTime;
+        }
+
+        public void printInfo() {
+            System.out.println("[" + studentNo + "] " + name + " | Service: " + serviceType + " | Time: " + estimatedTime + " mins");
+        }
+    }
+
+    // -------------------------------------------------------------
+    // 1. QUEUE IMPLEMENTATION
+    // -------------------------------------------------------------
+    static class QueueNode {
+        Student data;
+        QueueNode next;
+        public QueueNode(Student s) { this.data = s; this.next = null; }
+    }
+
+    static class StudentQueue {
+        private QueueNode front = null;
+        private QueueNode rear = null;
+
+        public void enqueue(Student s) {
+            QueueNode newNode = new QueueNode(s);
+            if (front == null) {
+                front = newNode;
+                rear = newNode;
+            } else {
+                rear.next = newNode;
+                rear = newNode;
+            }
+            System.out.println(s.name + " added to waiting queue.");
+        }
+
+        public Student dequeue() {
+            if (front == null) {
+                System.out.println("Queue is empty!");
+                return null;
+            }
+            Student served = front.data;
+            front = front.next;
+            if (front == null) rear = null;
+            return served;
+        }
+
+        public void displayQueue() {
+            if (front == null) {
+                System.out.println("Queue is currently empty.");
+                return;
+            }
+            QueueNode temp = front;
+            int count = 1;
+            System.out.println("\n--- Current Waiting Queue ---");
+            while (temp != null) {
+                System.out.print(count + ". ");
+                temp.data.printInfo();
+                temp = temp.next;
+                count++;
+            }
+        }
+    }
+
+    // -------------------------------------------------------------
+    // 2. LINKED LIST IMPLEMENTATION
+    // -------------------------------------------------------------
+    static class ListNode {
+        Student data;
+        ListNode next;
+        public ListNode(Student s) { this.data = s; this.next = null; }
+    }
+
+    static class StudentLinkedList {
+        private ListNode head = null;
+
+        public void insertStudent(Student s) {
+            ListNode newNode = new ListNode(s);
+            if (head == null) {
+                head = newNode;
+            } else {
+                ListNode temp = head;
+                while (temp.next != null) temp = temp.next;
+                temp.next = newNode;
+            }
+            System.out.println("Record added for " + s.name);
+        }
+
+        public void displayStudents() {
+            if (head == null) {
+                System.out.println("No records found.");
+                return;
+            }
+            ListNode temp = head;
+            System.out.println("\n--- Student Service Records ---");
+            while (temp != null) {
+                temp.data.printInfo();
+                temp = temp.next;
+            }
+        }
+
+        public Student searchStudent(String studentNo) {
+            ListNode temp = head;
+            while (temp != null) {
+                if (temp.data.studentNo.equals(studentNo)) return temp.data;
+                temp = temp.next;
+            }
+            return null;
+        }
+
+        public boolean removeStudent(String studentNo) {
+            if (head == null) return false;
+            if (head.data.studentNo.equals(studentNo)) {
+                head = head.next;
+                return true;
+            }
+            ListNode temp = head;
+            while (temp.next != null) {
+                if (temp.next.data.studentNo.equals(studentNo)) {
+                    temp.next = temp.next.next;
+                    return true;
+                }
+                temp = temp.next;
+            }
+            return false;
+        }
+    }
+
+    // -------------------------------------------------------------
+    // MAIN SYSTEM & MENU OPERATOR
+    // -------------------------------------------------------------
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        StudentQueue queue = new StudentQueue();
+        StudentLinkedList records = new StudentLinkedList();
+        
+        // Array to hold served student service times for statistics
+        int[] serviceTimes = new int[100]; 
+        int servedCount = 0;
+
+        // Preload default assignment data into queue
+        queue.enqueue(new Student("221045678", "Maria", "Registration", 12));
+        queue.enqueue(new Student("222034512", "Tomas", "Student Card", 5));
+        queue.enqueue(new Student("223041876", "Ndapewa", "Fees", 8));
+        queue.enqueue(new Student("221067341", "Simon", "Documents", 4));
+
+        int choice = 0;
+        while (choice != 11) {
+            System.out.println("\n==================================");
+            System.out.println("    CAMPUS SERVICE CENTRE MENU    ");
+            System.out.println("==================================");
+            System.out.println("1. Add student to waiting queue");
+            System.out.println("2. Serve next student (remove from queue)");
+            System.out.println("3. Display waiting students");
+            System.out.println("4. Add student service record (Linked List)");
+            System.out.println("5. Display student service records");
+            System.out.println("6. Search for student record");
+            System.out.println("7. Remove student record");
+            System.out.println("8. Display daily statistics");
+            System.out.println("9. Sort service times");
+            System.out.println("10. Run sorting experiment");
+            System.out.println("11. Exit");
+            System.out.print("Select option: ");
+
+            choice = scanner.nextInt();
+            scanner.nextLine(); // clear buffer
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter Student No: "); String id = scanner.nextLine();
+                    System.out.print("Enter Name: "); String name = scanner.nextLine();
+                    System.out.print("Enter Service Type: "); String type = scanner.nextLine();
+                    System.out.print("Enter Estimated Time (min): "); int time = scanner.nextInt();
+                    queue.enqueue(new Student(id, name, type, time));
+                    break;
+
+                case 2:
+                    Student served = queue.dequeue();
+                    if (served != null) {
+                        System.out.println("Now serving: " + served.name);
+                        records.insertStudent(served);
+                        serviceTimes[servedCount] = served.estimatedTime;
+                        servedCount++;
+                    }
+                    break;
+
+                case 3:
+                    queue.displayQueue();
+                    break;
+
+                case 4:
+                    System.out.print("Enter Student No: "); String rId = scanner.nextLine();
+                    System.out.print("Enter Name: "); String rName = scanner.nextLine();
+                    System.out.print("Enter Service Type: "); String rType = scanner.nextLine();
+                    System.out.print("Enter Estimated Time (min): "); int rTime = scanner.nextInt();
+                    records.insertStudent(new Student(rId, rName, rType, rTime));
+                    break;
+
+                case 5:
+                    records.displayStudents();
+                    break;
+
+                case 6:
+                    System.out.print("Enter Student No to search: "); String sId = scanner.nextLine();
+                    Student found = records.searchStudent(sId);
+                    if (found != null) found.printInfo();
+                    else System.out.println("Record not found!");
+                    break;
+
+                case 7:
+                    System.out.print("Enter Student No to remove: "); String delId = scanner.nextLine();
+                    if (records.removeStudent(delId)) System.out.println("Record deleted successfully.");
+                    else System.out.println("Record not found!");
+                    break;
+
+                case 8:
+                    // Task A4 Array Processing
+                    if (servedCount == 0) {
+                        System.out.println("No students served yet today!");
+                    } else {
+                        int total = 0, highest = serviceTimes[0], lowest = serviceTimes[0], over10 = 0;
+                        for (int i = 0; i < servedCount; i++) {
+                            int t = serviceTimes[i];
+                            total += t;
+                            if (t > highest) highest = t;
+                            if (t < lowest) lowest = t;
+                            if (t > 10) over10++;
+                        }
+                        double avg = (double) total / servedCount;
+                        System.out.println("\n--- DAILY STATISTICS ---");
+                        System.out.println("Total Students Served: " + servedCount);
+                        System.out.println("Total Service Time: " + total + " mins");
+                        System.out.println("Average Service Time: " + avg + " mins");
+                        System.out.println("Highest Service Time: " + highest + " mins");
+                        System.out.println("Lowest Service Time: " + lowest + " mins");
+                        System.out.println("Services > 10 mins: " + over10);
+                    }
+                    break;
+
+                case 9:
+                    // Task B Array Sorting Demo
+                    int[] testArray = {17, 5, 23, 8, 14, 3, 11, 20, 6, 9};
+                    System.out.print("\nUnsorted Array: ");
+                    for (int val : testArray) System.out.print(val + " ");
+                    
+                    // Simple Selection Sort demo
+                    for (int i = 0; i < testArray.length - 1; i++) {
+                        int minIdx = i;
+                        for (int j = i + 1; j < testArray.length; j++) {
+                            if (testArray[j] < testArray[minIdx]) minIdx = j;
+                        }
+                        int temp = testArray[i];
+                        testArray[i] = testArray[minIdx];
+                        testArray[minIdx] = temp;
+                    }
+                    System.out.print("\nSorted Array: ");
+                    for (int val : testArray) System.out.print(val + " ");
+                    System.out.println();
+                    break;
+
+                case 10:
+                    System.out.println("\nRunning Part C Experiments on sizes 20, 50, 100, 500...");
+                    runExperiment();
+                    break;
+
+                case 11:
+                    System.out.println("Exiting System. Goodbye!");
+                    break;
+
+                default:
+                    System.out.println("Invalid option! Try again.");
+            }
+        }
+    }
+
+    // Helper method for Part C experiment runner
+    public static void runExperiment() {
+        int[] sizes = {20, 50, 100, 500};
+        Random rand = new Random();
+
+        for (int size : sizes) {
+            int[] original = new int[size];
+            for (int i = 0; i < size; i++) original[i] = rand.nextInt(1000);
+
+            // Test Selection Sort
+            int[] copy = original.clone();
+            long start = System.nanoTime();
+            int comp = 0;
+            for (int i = 0; i < copy.length - 1; i++) {
+                int minIdx = i;
+                for (int j = i + 1; j < copy.length; j++) {
+                    comp++;
+                    if (copy[j] < copy[minIdx]) minIdx = j;
+                }
+                int temp = copy[i]; copy[i] = copy[minIdx]; copy[minIdx] = temp;
+            }
+            long end = System.nanoTime();
+            System.out.println("Size " + size + " | Selection Sort | Comparisons: " + comp + " | Time: " + (end - start) + " ns");
+        }
+    }
+}
