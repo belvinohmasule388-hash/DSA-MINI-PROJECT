@@ -4,164 +4,185 @@ import java.util.Scanner;
 import java.util.Random;
 
 public class CampusServiceCentre {
-
-    // -------------------------------------------------------------
-    // DATA MODELS
-    // -------------------------------------------------------------
     static class Student {
         String studentNo;
         String name;
         String serviceType;
-        int estimatedTime;
-
-        public Student(String studentNo, String name, String serviceType, int estimatedTime) {
+        int estimatedTime; 
+        
+        Student(String studentNo, String name, String serviceType, int estimatedTime) {
             this.studentNo = studentNo;
             this.name = name;
             this.serviceType = serviceType;
             this.estimatedTime = estimatedTime;
         }
 
-        public void printInfo() {
+        void printInfo() {
             System.out.println("[" + studentNo + "] " + name + " | Service: " + serviceType + " | Time: " + estimatedTime + " mins");
         }
     }
 
-    // -------------------------------------------------------------
-    // 1. QUEUE IMPLEMENTATION
-    // -------------------------------------------------------------
-    static class QueueNode {
-        Student data;
-        QueueNode next;
-        public QueueNode(Student s) { this.data = s; this.next = null; }
+    // ================================
+    // PART 1: THE QUEUE (waiting line)
+    // ================================
+
+    static class Node {
+        Student student;
+        Node next; 
+
+        Node(Student student) {
+            this.student = student;
+            this.next = null;
+        }
     }
 
     static class StudentQueue {
-        private QueueNode front = null;
-        private QueueNode rear = null;
+        Node front; 
+        Node rear;  
+        
+        void enqueue(Student student) {
+            Node newNode = new Node(student);
 
-        public void enqueue(Student s) {
-            QueueNode newNode = new QueueNode(s);
             if (front == null) {
                 front = newNode;
                 rear = newNode;
             } else {
+              
                 rear.next = newNode;
                 rear = newNode;
             }
-            System.out.println(s.name + " added to waiting queue.");
+            System.out.println(student.name + " added to waiting queue.");
         }
-
-        public Student dequeue() {
+        
+        Student dequeue() {
             if (front == null) {
                 System.out.println("Queue is empty!");
                 return null;
             }
-            Student served = front.data;
-            front = front.next;
-            if (front == null) rear = null;
-            return served;
-        }
 
-        public void displayQueue() {
+            Student servedStudent = front.student;
+            front = front.next; 
+
+            if (front == null) {
+                rear = null;
+            }
+
+            return servedStudent;
+        }
+        
+        void displayQueue() {
             if (front == null) {
                 System.out.println("Queue is currently empty.");
                 return;
             }
-            QueueNode temp = front;
-            int count = 1;
+
             System.out.println("\n--- Current Waiting Queue ---");
-            while (temp != null) {
-                System.out.print(count + ". ");
-                temp.data.printInfo();
-                temp = temp.next;
-                count++;
+            Node current = front;
+            int position = 1;
+
+            while (current != null) {
+                System.out.print(position + ". ");
+                current.student.printInfo();
+                current = current.next;
+                position++;
             }
         }
     }
 
-    // -------------------------------------------------------------
-    // 2. LINKED LIST IMPLEMENTATION
-    // -------------------------------------------------------------
+    // =========================================
+    // PART 2: THE LINKED LIST (served students)
+    // =========================================
     static class ListNode {
-        Student data;
+        Student student;
         ListNode next;
-        public ListNode(Student s) { this.data = s; this.next = null; }
+
+        ListNode(Student student) {
+            this.student = student;
+            this.next = null;
+        }
     }
 
     static class StudentLinkedList {
-        private ListNode head = null;
+        ListNode head; 
+        void insertStudent(Student student) {
+            ListNode newNode = new ListNode(student);
 
-        public void insertStudent(Student s) {
-            ListNode newNode = new ListNode(s);
             if (head == null) {
                 head = newNode;
             } else {
-                ListNode temp = head;
-                while (temp.next != null) temp = temp.next;
-                temp.next = newNode;
+                ListNode current = head;
+                while (current.next != null) {
+                    current = current.next;
+                }
+                current.next = newNode;
             }
-            System.out.println("Record added for " + s.name);
+            System.out.println("Record added for " + student.name);
         }
-
-        public void displayStudents() {
+        
+        void displayStudents() {
             if (head == null) {
                 System.out.println("No records found.");
                 return;
             }
-            ListNode temp = head;
+
             System.out.println("\n--- Student Service Records ---");
-            while (temp != null) {
-                temp.data.printInfo();
-                temp = temp.next;
+            ListNode current = head;
+            while (current != null) {
+                current.student.printInfo();
+                current = current.next;
             }
         }
 
-        public Student searchStudent(String studentNo) {
-            ListNode temp = head;
-            while (temp != null) {
-                if (temp.data.studentNo.equals(studentNo)) return temp.data;
-                temp = temp.next;
+        Student searchStudent(String studentNo) {
+            ListNode current = head;
+            while (current != null) {
+                if (current.student.studentNo.equals(studentNo)) {
+                    return current.student;
+                }
+                current = current.next;
             }
-            return null;
+            return null; 
         }
+        boolean removeStudent(String studentNo) {
+            if (head == null) {
+                return false;
+            }
 
-        public boolean removeStudent(String studentNo) {
-            if (head == null) return false;
-            if (head.data.studentNo.equals(studentNo)) {
+            if (head.student.studentNo.equals(studentNo)) {
                 head = head.next;
                 return true;
             }
-            ListNode temp = head;
-            while (temp.next != null) {
-                if (temp.next.data.studentNo.equals(studentNo)) {
-                    temp.next = temp.next.next;
+
+            ListNode current = head;
+            while (current.next != null) {
+                if (current.next.student.studentNo.equals(studentNo)) {
+                    current.next = current.next.next;
                     return true;
                 }
-                temp = temp.next;
+                current = current.next;
             }
-            return false;
+            return false; 
         }
     }
 
-    // -------------------------------------------------------------
-    // MAIN SYSTEM & MENU OPERATOR
-    // -------------------------------------------------------------
+    // ==================================
+    // PART 3: MAIN PROGRAM AND MENU
+    // ==================================
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         StudentQueue queue = new StudentQueue();
         StudentLinkedList records = new StudentLinkedList();
-        
-        // Array to hold served student service times for statistics
-        int[] serviceTimes = new int[100]; 
-        int servedCount = 0;
 
-        // Preload default assignment data into queue
+        int[] serviceTimes = new int[100];
+        int servedCount = 0; 
+        
         queue.enqueue(new Student("221045678", "Maria", "Registration", 12));
         queue.enqueue(new Student("222034512", "Tomas", "Student Card", 5));
         queue.enqueue(new Student("223041876", "Ndapewa", "Fees", 8));
         queue.enqueue(new Student("221067341", "Simon", "Documents", 4));
 
         int choice = 0;
+
         while (choice != 11) {
             System.out.println("\n==================================");
             System.out.println("    CAMPUS SERVICE CENTRE MENU    ");
@@ -180,139 +201,178 @@ public class CampusServiceCentre {
             System.out.print("Select option: ");
 
             choice = scanner.nextInt();
-            scanner.nextLine(); // clear buffer
+            scanner.nextLine();
 
-            switch (choice) {
-                case 1:
-                    System.out.print("Enter Student No: "); String id = scanner.nextLine();
-                    System.out.print("Enter Name: "); String name = scanner.nextLine();
-                    System.out.print("Enter Service Type: "); String type = scanner.nextLine();
-                    System.out.print("Enter Estimated Time (min): "); int time = scanner.nextInt();
-                    queue.enqueue(new Student(id, name, type, time));
-                    break;
+            if (choice == 1) {
+                System.out.print("Enter Student No: ");
+                String id = scanner.nextLine();
+                System.out.print("Enter Name: ");
+                String name = scanner.nextLine();
+                System.out.print("Enter Service Type: ");
+                String type = scanner.nextLine();
+                System.out.print("Enter Estimated Time (min): ");
+                int time = scanner.nextInt();
 
-                case 2:
-                    Student served = queue.dequeue();
-                    if (served != null) {
-                        System.out.println("Now serving: " + served.name);
-                        records.insertStudent(served);
-                        serviceTimes[servedCount] = served.estimatedTime;
-                        servedCount++;
-                    }
-                    break;
+                queue.enqueue(new Student(id, name, type, time));
 
-                case 3:
-                    queue.displayQueue();
-                    break;
+            } else if (choice == 2) {
+                Student servedStudent = queue.dequeue();
+                if (servedStudent != null) {
+                    System.out.println("Now serving: " + servedStudent.name);
+                    records.insertStudent(servedStudent);
+                    serviceTimes[servedCount] = servedStudent.estimatedTime;
+                    servedCount++;
+                }
 
-                case 4:
-                    System.out.print("Enter Student No: "); String rId = scanner.nextLine();
-                    System.out.print("Enter Name: "); String rName = scanner.nextLine();
-                    System.out.print("Enter Service Type: "); String rType = scanner.nextLine();
-                    System.out.print("Enter Estimated Time (min): "); int rTime = scanner.nextInt();
-                    records.insertStudent(new Student(rId, rName, rType, rTime));
-                    break;
+            } else if (choice == 3) {
+                queue.displayQueue();
 
-                case 5:
-                    records.displayStudents();
-                    break;
+            } else if (choice == 4) {
+                System.out.print("Enter Student No: ");
+                String id = scanner.nextLine();
+                System.out.print("Enter Name: ");
+                String name = scanner.nextLine();
+                System.out.print("Enter Service Type: ");
+                String type = scanner.nextLine();
+                System.out.print("Enter Estimated Time (min): ");
+                int time = scanner.nextInt();
 
-                case 6:
-                    System.out.print("Enter Student No to search: "); String sId = scanner.nextLine();
-                    Student found = records.searchStudent(sId);
-                    if (found != null) found.printInfo();
-                    else System.out.println("Record not found!");
-                    break;
+                records.insertStudent(new Student(id, name, type, time));
 
-                case 7:
-                    System.out.print("Enter Student No to remove: "); String delId = scanner.nextLine();
-                    if (records.removeStudent(delId)) System.out.println("Record deleted successfully.");
-                    else System.out.println("Record not found!");
-                    break;
+            } else if (choice == 5) {
+                records.displayStudents();
 
-                case 8:
-                    // Task A4 Array Processing
-                    if (servedCount == 0) {
-                        System.out.println("No students served yet today!");
-                    } else {
-                        int total = 0, highest = serviceTimes[0], lowest = serviceTimes[0], over10 = 0;
-                        for (int i = 0; i < servedCount; i++) {
-                            int t = serviceTimes[i];
-                            total += t;
-                            if (t > highest) highest = t;
-                            if (t < lowest) lowest = t;
-                            if (t > 10) over10++;
+            } else if (choice == 6) {
+                System.out.print("Enter Student No to search: ");
+                String id = scanner.nextLine();
+                Student foundStudent = records.searchStudent(id);
+                if (foundStudent != null) {
+                    foundStudent.printInfo();
+                } else {
+                    System.out.println("Record not found!");
+                }
+
+            } else if (choice == 7) {
+                System.out.print("Enter Student No to remove: ");
+                String id = scanner.nextLine();
+                if (records.removeStudent(id)) {
+                    System.out.println("Record deleted successfully.");
+                } else {
+                    System.out.println("Record not found!");
+                }
+
+            } else if (choice == 8) {
+                if (servedCount == 0) {
+                    System.out.println("No students served yet today!");
+                } else {
+                    int total = 0;
+                    int highest = serviceTimes[0];
+                    int lowest = serviceTimes[0];
+                    int over10 = 0;
+
+                    for (int i = 0; i < servedCount; i++) {
+                        int t = serviceTimes[i];
+                        total = total + t;
+
+                        if (t > highest) {
+                            highest = t;
                         }
-                        double avg = (double) total / servedCount;
-                        System.out.println("\n--- DAILY STATISTICS ---");
-                        System.out.println("Total Students Served: " + servedCount);
-                        System.out.println("Total Service Time: " + total + " mins");
-                        System.out.println("Average Service Time: " + avg + " mins");
-                        System.out.println("Highest Service Time: " + highest + " mins");
-                        System.out.println("Lowest Service Time: " + lowest + " mins");
-                        System.out.println("Services > 10 mins: " + over10);
+                        if (t < lowest) {
+                            lowest = t;
+                        }
+                        if (t > 10) {
+                            over10 = over10 + 1;
+                        }
                     }
-                    break;
 
-                case 9:
-                    // Task B Array Sorting Demo
-                    int[] testArray = {17, 5, 23, 8, 14, 3, 11, 20, 6, 9};
-                    System.out.print("\nUnsorted Array: ");
-                    for (int val : testArray) System.out.print(val + " ");
+                    double average = (double) total / servedCount;
+
+                    System.out.println("\n--- DAILY STATISTICS ---");
+                    System.out.println("Total Students Served: " + servedCount);
+                    System.out.println("Total Service Time: " + total + " mins");
+                    System.out.println("Average Service Time: " + average + " mins");
+                    System.out.println("Highest Service Time: " + highest + " mins");
+                    System.out.println("Lowest Service Time: " + lowest + " mins");
+                    System.out.println("Services > 10 mins: " + over10);
+                }
+
+            } else if (choice == 9) {
+                
+                int[] testArray = {17, 5, 23, 8, 14, 3, 11, 20, 6, 9};
+
+                System.out.print("\nUnsorted Array: ");
+                for (int i = 0; i < testArray.length; i++) {
+                    System.out.print(testArray[i] + " ");
+                }
+
+                
+                for (int i = 0; i < testArray.length - 1; i++) {
+                    int smallestIndex = i;
+
+                    for (int j = i + 1; j < testArray.length; j++) {
+                        if (testArray[j] < testArray[smallestIndex]) {
+                            smallestIndex = j;
+                        }
+                    }
+
                     
-                    // Simple Selection Sort demo
-                    for (int i = 0; i < testArray.length - 1; i++) {
-                        int minIdx = i;
-                        for (int j = i + 1; j < testArray.length; j++) {
-                            if (testArray[j] < testArray[minIdx]) minIdx = j;
-                        }
-                        int temp = testArray[i];
-                        testArray[i] = testArray[minIdx];
-                        testArray[minIdx] = temp;
-                    }
-                    System.out.print("\nSorted Array: ");
-                    for (int val : testArray) System.out.print(val + " ");
-                    System.out.println();
-                    break;
+                    int temp = testArray[i];
+                    testArray[i] = testArray[smallestIndex];
+                    testArray[smallestIndex] = temp;
+                }
 
-                case 10:
-                    System.out.println("\nRunning Part C Experiments on sizes 20, 50, 100, 500...");
-                    runExperiment();
-                    break;
+                System.out.print("\nSorted Array: ");
+                for (int i = 0; i < testArray.length; i++) {
+                    System.out.print(testArray[i] + " ");
+                }
+                System.out.println();
 
-                case 11:
-                    System.out.println("Exiting System. Goodbye!");
-                    break;
+            } else if (choice == 10) {
+                System.out.println("\nRunning Part C Experiments on sizes 20, 50, 100, 500...");
+                runExperiment();
 
-                default:
-                    System.out.println("Invalid option! Try again.");
+            } else if (choice == 11) {
+                System.out.println("Exiting System. Goodbye!");
+
+            } else {
+                System.out.println("Invalid option! Try again.");
             }
         }
     }
 
-    // Helper method for Part C experiment runner
+
     public static void runExperiment() {
         int[] sizes = {20, 50, 100, 500};
         Random rand = new Random();
 
         for (int size : sizes) {
             int[] original = new int[size];
-            for (int i = 0; i < size; i++) original[i] = rand.nextInt(1000);
-
-            // Test Selection Sort
-            int[] copy = original.clone();
-            long start = System.nanoTime();
-            int comp = 0;
-            for (int i = 0; i < copy.length - 1; i++) {
-                int minIdx = i;
-                for (int j = i + 1; j < copy.length; j++) {
-                    comp++;
-                    if (copy[j] < copy[minIdx]) minIdx = j;
-                }
-                int temp = copy[i]; copy[i] = copy[minIdx]; copy[minIdx] = temp;
+            for (int i = 0; i < size; i++) {
+                original[i] = rand.nextInt(1000);
             }
-            long end = System.nanoTime();
-            System.out.println("Size " + size + " | Selection Sort | Comparisons: " + comp + " | Time: " + (end - start) + " ns");
+
+        
+            int[] copy = original.clone();
+
+            long startTime = System.nanoTime();
+            int comparisons = 0;
+
+            for (int i = 0; i < copy.length - 1; i++) {
+                int smallestIndex = i;
+                for (int j = i + 1; j < copy.length; j++) {
+                    comparisons++;
+                    if (copy[j] < copy[smallestIndex]) {
+                        smallestIndex = j;
+                    }
+                }
+                int temp = copy[i];
+                copy[i] = copy[smallestIndex];
+                copy[smallestIndex] = temp;
+            }
+
+            long endTime = System.nanoTime();
+
+            System.out.println("Size " + size + " | Selection Sort | Comparisons: " + comparisons + " | Time: " + (endTime - startTime) + " ns");
         }
     }
 }
