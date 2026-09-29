@@ -1,22 +1,4 @@
-Task B1 — Selection Sort
-Array: [17, 5, 23, 8, 14, 3, 11, 20, 6, 9]
-Selection sort repeatedly finds the smallest remaining number in the unsorted portion and swaps it with the first unsorted position. 
-Pass Traces (First 3 Passes)
-•	Initial Array: [17, 5, 23, 8, 14, 3, 11, 20, 6, 9]
-  •	Pass 1:
-    o	Smallest value found: 3 (index 5). 
-    o	Swap 3 with 17 (index 0). 
-    o Array after Pass 1: [3, 5, 23, 8, 14, 17, 11, 20, 6, 9]
-  •	Pass 2:
-    o	Smallest value from index 1 onward: 5 (index 1). 
-    o	5 is already in place. Swap 5 with 5 (no change).
-    o	Array after Pass 2: [3, 5, 23, 8, 14, 17, 11, 20, 6, 9]
-  •	Pass 3:
-    o	Smallest value from index 2 onward: 6 (index 8). 
-    o	Swap 6 with 23 (index 2). 
-    o	Array after Pass 3: [3, 5, 6, 8, 14, 17, 11, 20, 23, 9] 
-
- Task B1 Java Implementation
+Task B1 Java Implementation
 public class SelectionSort {
 
     public static void selectionSort(int[] arr) {
