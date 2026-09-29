@@ -1,5 +1,3 @@
-Before serving: front -> [Maria] -> [Tomas] -> [Ndapewa] -> [Simon] -> [Anna] -> [Petrus] <- rear 
-After serving 3 (Maria, Tomas, Ndapewa dequeued): front -> [Simon] -> [Anna] -> [Petrus] <- rear
 
 class Main {
     public static void main(String[] args) {
@@ -125,8 +123,3 @@ class Student {
     }
 }
 
-
-
-The reason as to why queue is the appropriate approach 
-is because students must be served strictly in arrival order so queue (FIRST IN FIRST OUT) is used to model the waiting line, 
-and because it defines operations insert at the rear the front. 
